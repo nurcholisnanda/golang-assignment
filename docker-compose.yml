@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  # Apps container
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mezink
+    ports:
+      - 8080:8080
+    restart: on-failure
+    depends_on:
+      - postgres
+    networks:
+      - mezink_network
+
+  # Database container
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - 5434:5432
+    environment:
+      - POSTGRES_USER=postgres      
+      - POSTGRES_PASSWORD=password  
+      - POSTGRES_DB=mezink        
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - mezink_network
+
+volumes:
+  database_postgres:
+networks:
+  mezink_network:
+    driver: bridge
